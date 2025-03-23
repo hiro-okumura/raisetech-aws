@@ -14,12 +14,13 @@
 
 ## RDS の作成
 
+- 今回 RDS はシングル AZ 構成だが、AWS の用件に沿って最低限 2 つのサブネットを指定して、サブネットグループを作成した
+
 ![RDS](images/rds.png)
 
 ## RDS のセキュリティグループ
 
-- EC2 のセキュリティグループ ID を指定してインバウンドを許可
-  ![RDS-SG](images/rds-sg.png)
+![RDS-SG](images/rds-sg.png)
 
 ## EC2 から RDS へ接続
 
