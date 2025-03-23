@@ -18,7 +18,8 @@
 
 ## RDS のセキュリティグループ
 
-![RDS-SG](images/rds-sg.png)
+- EC2 のセキュリティグループ ID を指定してインバウンドを許可
+  ![RDS-SG](images/rds-sg.png)
 
 ## EC2 から RDS へ接続
 
