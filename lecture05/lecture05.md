@@ -70,34 +70,37 @@ $ sudo cat /etc/systemd/system/puma.service
 ![Pumaを起動](images/Start-Puma.png)
 ![実行画面](images/Application.png)
 
-> **Note: アプリケーションに CSS が適用されない**
->
-> Nginx に権限を付与する必要がある模様。以下のコマンドで解決した。
->
-> ```
-> $ sudo chown -R ec2-user:ec2-user /var/lib/nginx
-> $ sudo chmod -R 755 /var/lib/nginx
-> ```
->
-> **Note: 画像が表示されない**
-> mini_magick を追加する。
-> `config/application.rb  > config.active_storage.variant_processor = :mini_magick`
+**Note: アプリケーションに CSS が適用されない**
+
+- Nginx に権限を付与する必要がある模様。以下のコマンドで解決した。
+
+```
+$ sudo chown -R ec2-user:ec2-user /var/lib/nginx
+$ sudo chmod -R 755 /var/lib/nginx
+```
+
+**Note: 画像が表示されない**
+
+- mini_magick を追加する。
+
+`config/application.rb  > config.active_storage.variant_processor = :mini_magick`
 
 ## 5.ALB を経由するように変更
 
 1. ターゲットグループを作成する。
 2. ALB を作成してターゲットグループをアタッチする。
 3. ALB の DNS 名を使ってアクセス
+
    ![ターゲットグループ](images/Target_Group.png)
    ![ALB](images/ALB.png)
    ![DNS名を使った実行画面](images/ALB-DNS.png)
 
-> **ERROR: ALB からアクセスができない**
->
-> `development.rb`を修正して、DNS 名によるアクセスを許可する
-> `config.hosts > RaiseTech-Lecture05-448579147.ap-northeast-1.elb.amazonaws.com`
->
-> ![ALBエラー](images/ALB-Connetion-ERROR.png)
+**ERROR: ALB からアクセスができない**
+
+- `development.rb`を修正して、DNS 名によるアクセスを許可する
+- `config.hosts > RaiseTech-Lecture05-448579147.ap-northeast-1.elb.amazonaws.com`
+
+![ALBエラー](images/ALB-Connetion-ERROR.png)
 
 ## 6.ストレージに S3 を追加
 
@@ -110,15 +113,15 @@ $ sudo cat /etc/systemd/system/puma.service
    ![S3](images/S3-Bucket.png)
    ![S3オブジェクト](images/S3-Object-Open.png)
 
-> **ERROR: オブジェクトを直接開くことができない（AccessDenied）**
->
-> `Storage.yml`と`source ~/.bash_profile`に IAM ユーザーのアクセスキーとシークレットアクセスキーの環境変数を設定すると解決した。
+**ERROR: オブジェクトを直接開くことができない（AccessDenied）**
 
-> **ERROR: SyntaxError**
->
-> バケット名の前後にダブルコロンを付けて解決した。
->
-> ![S3エラー](images/S3-ERROR.png)
+- `Storage.yml`と`source ~/.bash_profile`に IAM ユーザーのアクセスキーとシークレットアクセスキーの環境変数を設定すると解決した。
+
+**ERROR: SyntaxError**
+
+- バケット名の前後にダブルコロンを付けて解決した。
+
+![S3エラー](images/S3-ERROR.png)
 
 ## 7.構成図
 
