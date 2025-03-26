@@ -109,7 +109,7 @@ $ sudo chmod -R 755 /var/lib/nginx
 3. ストレージの保存先を変更する。
    `development.rb > config.active_storage.service = amazon`
 4. S3 のバケット名を追加する。
-   `config/storage.yml > bucket: "for-raisetech-lecture05-s3"`
+   `config/storage.yml > bucket: for-raisetech-lecture05-s3`
    ![S3](images/S3-Bucket.png)
    ![S3オブジェクト](images/S3-Object-Open.png)
 
@@ -119,7 +119,15 @@ $ sudo chmod -R 755 /var/lib/nginx
 
 **ERROR: SyntaxError**
 
-- バケット名の前後にダブルコロンを付けて解決した。
+- 以下のように修正することで解決した。
+
+```
+<修正前>
+bucket: for-raisetech-lecture05-s3
+
+<修正後>
+bucket: "for-raisetech-lecture05-s3"
+```
 
 ![S3エラー](images/S3-ERROR.png)
 
