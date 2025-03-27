@@ -2,7 +2,7 @@
 
 ## CloudTrail を使ったロギング
 
-- AWS ユーザーの操作をロギングするサービス。
+- ユーザーや AWS で主体となるサービスの操作をロギングするサービス。
 - Json 形式で詳細なログが保存される。
 
 ![CloudTrail](images/CloudTrail.png)
