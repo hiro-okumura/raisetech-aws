@@ -11,13 +11,20 @@
 
 **操作したユーザーに関する情報**
 
+- 操作したユーザー： `"RaiseTech-User"`
+
 ![ユーザー名](images/Cloudtrail-UserName.png)
 
 **イベントに関する情報**
 
+- イベント名：`"StartInstances"`
+- イベントが発生した時間やリージョン、ソース元の IP アドレスなど
+
 ![イベント名](images/CloudTrail-StartInstances.png)
 
 **インスタンスのステータスがどうなったか**
+
+- インスタンスの状態：`"Pending"`（起動中）
 
 ![インスタンスのステータス](images/CloudTrail-CurrentState.png)
 
@@ -43,11 +50,18 @@
 
 ## AWS 利用料の見積り
 
-[第 5 回までに作成したリソースを参考にした見積り](https://calculator.aws/#/estimate?id=5661dd7874eeff3bc0213b9e6f15dac359c68a3c)
+[第 5 回までに作成したリソースを参考にした見積り](https://calculator.aws/#/estimate?id=b8435e5195ba58dc9ad03129a833fabb6ad786bd)
 
 ## アカウントの利用料の確認
 
+- EC2 インスタンス起動状態のパブリック IP アドレスに対して課金されている。
+- AWS サービスを利用する際には、まず無料利用枠を確認するようにしているため、それ以外のサービスは無料利用枠の範囲に収まっている。
+
 ![アカウントの請求情報](images/Billing.png)
+
+![パブリックIPの請求情報](images/Binlling-Public-IP.png)
+
+![パブリックIPの料金](images/Public-IP.png)
 
 ## 感想
 
