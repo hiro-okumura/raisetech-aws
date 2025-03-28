@@ -30,7 +30,7 @@
 - 非営利団体である OWASP がとくに重大な 10 個のセキュリティインシデントについてまとめているため、必要に応じて参照する。
   - [OWASP TOP 10 のリンク（日本語版）](https://github.com/owasp-ja/Top10/blob/master/2021/docs/index.ja.md)
 - IPA（独立処理推進機構）が公表する共通脆弱性評価システムを参考にする。CVSS のデータベースを日本では JVN と呼ぶ。
-- [JVN 脆弱性レポートの読み方](https://jvn.jp/nav/jvnhelp.html)
+  - [JVN 脆弱性レポートの読み方](https://jvn.jp/nav/jvnhelp.html)
 
 ## 感想
 
