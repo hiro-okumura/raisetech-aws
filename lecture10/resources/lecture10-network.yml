@@ -1,0 +1,192 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: "Network Stack for RaiseTech Lecture10"
+
+Parameters:
+  BaseName:
+    Type: String
+    Default: "raisetech-lecture10"
+
+  VpcCIDR:
+    Type: String
+    Default: "10.0.0.0/16"
+
+  PublicSubnet1CIDR:
+    Type: String
+    Default: "10.0.1.0/24"
+
+  PublicSubnet2CIDR:
+    Type: String
+    Default: "10.0.2.0/24"
+
+  PrivateSubnet1CIDR:
+    Type: String
+    Default: "10.0.3.0/24"
+
+  PrivateSubnet2CIDR:
+    Type: String
+    Default: "10.0.4.0/24"
+
+Resources:
+  # VPC
+  VPC:
+    Type: AWS::EC2::VPC
+    Properties:
+      CidrBlock: !Ref VpcCIDR
+      EnableDnsHostnames: true
+      EnableDnsSupport: true
+      Tags:
+        - Key: Name
+          Value: !Sub ${BaseName}-VPC
+
+  # パブリックサブネット：ap-northeast-1a
+  PublicSubnet1:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref VPC
+      AvailabilityZone: ap-northeast-1a
+      CidrBlock: !Ref PublicSubnet1CIDR
+      MapPublicIpOnLaunch: true
+      Tags:
+        - Key: Name
+          Value: !Sub ${BaseName}-PublicSubnet1
+
+  # パブリックサブネット：ap-northeast-1c
+  PublicSubnet2:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref VPC
+      AvailabilityZone: ap-northeast-1c
+      CidrBlock: !Ref PublicSubnet2CIDR
+      MapPublicIpOnLaunch: true
+      Tags:
+        - Key: Name
+          Value: !Sub ${BaseName}-PublicSubnet2
+
+  # プライベートサブネット：ap-northeast-1a
+  PrivateSubnet1:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref VPC
+      AvailabilityZone: ap-northeast-1a
+      CidrBlock: !Ref PrivateSubnet1CIDR
+      Tags:
+        - Key: Name
+          Value: !Sub ${BaseName}-PrivateSubnet1
+
+  # プライベートサブネット：ap-northeast-1c
+  PrivateSubnet2:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref VPC
+      AvailabilityZone: ap-northeast-1c
+      CidrBlock: !Ref PrivateSubnet2CIDR
+      Tags:
+        - Key: Name
+          Value: !Sub ${BaseName}-PrivateSubnet2
+
+  # インターネットゲートウェイ
+  InternetGateway:
+    Type: AWS::EC2::InternetGateway
+    Properties:
+      Tags:
+        - Key: Name
+          Value: !Sub ${BaseName}-IGW
+
+  # インターネットゲートウェイのアタッチ
+  InternetGatewayAttachment:
+    Type: AWS::EC2::VPCGatewayAttachment
+    Properties:
+      InternetGatewayId: !Ref InternetGateway
+      VpcId: !Ref VPC
+
+  # デフォルトのルート設定
+  DefaultPublicRoute:
+    Type: AWS::EC2::Route
+    DependsOn: InternetGatewayAttachment
+    Properties:
+      RouteTableId: !Ref PublicRouteTable
+      DestinationCidrBlock: 0.0.0.0/0
+      GatewayId: !Ref InternetGateway
+
+  # パブリックサブネットのルートテーブル
+  PublicRouteTable:
+    Type: AWS::EC2::RouteTable
+    Properties:
+      VpcId: !Ref VPC
+      Tags:
+        - Key: Name
+          Value: !Sub ${BaseName}-PublicRouteTable
+
+  #プライベートサブネットのルートテーブル
+  PrivateRouteTable:
+    Type: AWS::EC2::RouteTable
+    Properties:
+      VpcId: !Ref VPC
+      Tags:
+        - Key: Name
+          Value: !Sub ${BaseName}-PrivateRouteTable
+
+  # パブリックサブネット1のルートテーブルとの関連付け
+  PublicSubnet1RouteTableAssociation:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      RouteTableId: !Ref PublicRouteTable
+      SubnetId: !Ref PublicSubnet1
+
+  # パブリックサブネット2のルートテーブルとの関連付け
+  PublicSubnet2RouteTableAssociation:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      RouteTableId: !Ref PublicRouteTable
+      SubnetId: !Ref PublicSubnet2
+
+  # プライベートサブネット1のルートテーブルとの関連付け
+  PrivateSubnet1RouteTableAssociation:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      RouteTableId: !Ref PrivateRouteTable
+      SubnetId: !Ref PrivateSubnet1
+
+  # プライベートサブネット2のルートテーブルとの関連付け
+  PrivateSubnet2RouteTableAssociation:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      RouteTableId: !Ref PrivateRouteTable
+      SubnetId: !Ref PrivateSubnet2
+
+Outputs:
+  BaseName:
+    Description: This is the base name of the stack
+    Value: !Ref BaseName
+    Export:
+      Name: ExportedBaseName
+
+  VpcId:
+    Description: This is the VPC ID
+    Value: !Ref VPC
+    Export:
+      Name: ExportedVpcId
+
+  Subnet1Id:
+    Description: This is the subnet 1a ID
+    Value: !Ref PublicSubnet1
+    Export:
+      Name: ExportedSubnet1Id
+
+  Subnet2Id:
+    Description: This is the subnet 1c ID
+    Value: !Ref PublicSubnet2
+    Export:
+      Name: ExportedSubnet2Id
+
+  PrivateSubnet1Id:
+    Description: This is the private subnet 1a ID
+    Value: !Ref PrivateSubnet1
+    Export:
+      Name: ExportedPrivateSubnet1Id
+
+  PrivateSubnet2Id:
+    Description: This is the private subnet 1c ID
+    Value: !Ref PrivateSubnet2
+    Export:
+      Name: ExportedPrivateSubnet2Id

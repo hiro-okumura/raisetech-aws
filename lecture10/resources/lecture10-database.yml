@@ -1,0 +1,56 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: Database Stack with RDS
+
+Parameters:
+  DBPassword:
+    Type: String
+    NoEcho: true
+
+Resources:
+  # RDS
+  RDS:
+    Type: AWS::RDS::DBInstance
+    Properties:
+      DBInstanceIdentifier: !Sub ${BaseName}-Database
+      AvailabilityZone: !ImportValue ExportedPrivateSubnet1Id
+      Engine: mysql
+      DBInstanceClass: db.t4g.micro
+      AllocatedStorage: 20
+      EngineVersion: 8.0.40
+      StorageType: gp2
+      MultiAZ: false
+      PubliclyAccessible: false
+      MasterUsername: "{{resolve:secretsmanager:MyRDSSecret:SecretString:username}}"
+      MasterUserPassword: "{{resolve:secretsmanager:MyRDSSecret:SecretString:password}}"
+      VPCSecurityGroups:
+        - !ImportValue ExportedDB-SG-ID
+      DBSubnetGroupName: !Ref DBSubnetGroup
+      Tags:
+        - Key: Name
+          Value: !Sub ${BaseName}-Database
+
+  # DBサブネットグループ
+  DBSubnetGroup:
+    Type: AWS::RDS::DBSubnetGroup
+    Properties:
+      DBSubnetGroupDescription: Subnet group for RDS
+      SubnetIds:
+        - !ImportValue ExportedPrivateSubnet1Id
+        - !ImportValue ExportedPrivateSubnet2Id
+      Tags:
+        - Key: Name
+          Value: !Sub ${BaseName}-DB-Subnet-Group
+
+  # シークレットマネージャー For RDS
+  RDSSecret:
+    Type: "AWS::SecretsManager::Secret"
+    Properties:
+      Name: "lecture10-rds-secret"
+      GenerateSecretString:
+        SecretStringTemplate: '{"username": "admin"}'
+        GenerateStringKey: "password"
+        PasswordLength: 20
+        ExcludeCharacters: '"@/\'
+      Tags:
+        - Key: Name
+          Value: !Sub ${BaseName}-RDSSecret
