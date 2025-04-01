@@ -1,24 +1,76 @@
-### ネットワーク
+# 第 10 回講義の課題
 
-- VPC
-- サブネット（パブリック/プライベート）
-- IGW
-- ルートテーブル
-- サブネットとルートテーブルの関連付け
+## 課題内容
 
-### アプリケーション
+- これまでに構築した AWS リソースを CloudFormation で構築する。
 
-- ALB
-- ターゲットグループ
-- S3
+## 使用したテンプレート
 
-### セキュリティ
+[lecture10-network.yml](templates/lecture10-network.yml)
+[lecture10-security.yml](templates/lecture10-security.yml)
+[lecture10-application.yml](templates/lecture10-application.yml)
+[lecture10-database.yml](templates/lecture10-database.yml)
 
-- セキュリティグループ（ALB 用、EC2 用、RDS 用）
-- IAM ロール
-- インスタンスプロファイル
+### スタック
 
-### DB
+![スタック](images/Cfn-Stack.png)
 
-- RDS
-- DB サブネットグループ
+## テンプレートによって作成されたリソース
+
+### VPC
+
+![VPC](images/VPC.png)
+
+### インターネットゲートウェイ
+
+![IGW](images/IGW.png)
+
+### デフォルトのパブリックルートテーブル設定
+
+![DefaultPublicRoute](images/PublicRouteTable.png)
+
+### EC2
+
+![](images/EC2.png)
+
+### EC2 のセキュリティグループ
+
+![EC2](images/EC2-SG.png)
+
+### RDS
+
+![RDS](images/RDS.png)
+
+### RDS のセキュリティグループ
+
+![REDS-SG](images/RDS-SG-Inbound.png)
+
+### DB のサブネットグループ
+
+![DBサブネットグループ](images/DB-Subnet-Group.png)
+
+### ALB
+
+![ALB](images/ALB.png)
+
+### ALB のセキュリティグループ
+
+![ALB-SG](images/ALB-SG.png)
+
+### S3 バケット
+
+![S3](images/S3.png)
+
+### S3 アクセスを許可するための IAM ロール
+
+![S3-IAMロール](images/IAM-Role.png)
+
+## 作成したリソースに接続する
+
+![EC2とMySQLにログイン](images/mysql-login.png)
+
+## 感想
+
+- ロールバックされる仕組みのおかげで、何度もトライアンドエラーを繰り返すことが出来て、非常に学習が捗る良いシステムでした。
+- `Outputs` でエクスポートした値を、別のスタックの組み込み関数 Fn::Sub の中で利用する手段がわからず困っていましたが、AWS 公式のドキュメントを参考にして解決することができました。ChatGPT を使っても解決策が返ってこなかったので勉強になりました。
+- 第 6 回で学んだ AWS Secret Manger を使用しました。シークレットに値が保存されるので、別途パスワードをメモする必要もなく便利でした。

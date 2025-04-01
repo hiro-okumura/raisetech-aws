@@ -2,47 +2,54 @@ AWSTemplateFormatVersion: "2010-09-09"
 Description: Application Stack for RaiseTech Lecture10
 
 Parameters:
-  KeyName: # キーペアはスタック作成時に選択する
-  Description: The EC2 Key Pair to allow SSH access to the instance
-  Type: "AWS::EC2::KeyPair::KeyName"
+  KeyName:
+    Description: The EC2 Key Pair to allow SSH access to the instance
+    Type: String
+    Default: raisetech-lecture10-key-pair
 
 Resources:
-  # EC2インスタンス: ap-northeast-1a
+  # EC2インスタンス
   EC2Instance:
     Type: AWS::EC2::Instance
     Properties:
-      ImageId: null # AMIが必要
+      ImageId: ami-0174853074da9aa25
       KeyName: !Ref KeyName
       InstanceType: t2.micro
-      SubnetId: !ImportValue ExportedSubnet1Id
-      SecurityGroupIds: !ImportValue ExportedEC2-SG-ID
       IamInstanceProfile: !ImportValue ExportedS3InstanceProfile
       NetworkInterfaces:
-        - AssociatePublicIpAddress: true
+        - DeviceIndex: "0"
+          SubnetId: !ImportValue ExportedPublicSubnet1Id
+          AssociatePublicIpAddress: true
           GroupSet:
             - !ImportValue ExportedEC2-SG-ID
-          DeviceIndex: "0"
       Tags:
         - Key: Name
-          Value: !Sub ${ExportedBaseName}-EC2
+          Value: !Sub
+            - ${ExportedBaseName}-EC2
+            - ExportedBaseName: { "Fn::ImportValue": ExportedBaseName }
 
   # ALB
   ApplicationLoadBalancer:
     Type: AWS::ElasticLoadBalancingV2::LoadBalancer
     Properties:
+      Name: !Sub
+        - ${ExportedBaseName}-ALB
+        - ExportedBaseName: { "Fn::ImportValue": ExportedBaseName }
       Type: application
       Scheme: internet-facing
       IpAddressType: ipv4
       Subnets:
-        - !ImportValue ExportedSubnet1Id
-        - !ImportValue ExportedSubnet2Id
+        - !ImportValue ExportedPublicSubnet1Id
+        - !ImportValue ExportedPublicSubnet2Id
       SecurityGroups:
         - !ImportValue ExportedALB-SG-ID
       Tags:
         - Key: Name
-          Value: !Sub ${ExportedBaseName}-ALB
+          Value: !Sub
+            - ${ExportedBaseName}-ALB
+            - ExportedBaseName: { "Fn::ImportValue": ExportedBaseName }
 
-  # リスナー
+  # HTTPリスナー
   ApplicationListener:
     Type: AWS::ElasticLoadBalancingV2::Listener
     Properties:
@@ -57,7 +64,9 @@ Resources:
   ApplicationTargetGroup:
     Type: AWS::ElasticLoadBalancingV2::TargetGroup
     Properties:
-      Name: !Sub ${ExportedBaseName}-Target-Group
+      Name: !Sub
+        - ${ExportedBaseName}-Target-Group
+        - ExportedBaseName: { "Fn::ImportValue": ExportedBaseName }
       Port: 80
       Protocol: HTTP
       TargetType: instance
@@ -65,22 +74,25 @@ Resources:
       IpAddressType: ipv4
       Matcher:
         HttpCode: 200
-      HealthCheck:
-        Path: /
-        Port: 80
-        Protocol: HTTP
-        TimeoutSeconds: 5
-        HealthyThresholdCount: 2
-        UnhealthyThresholdCount: 2
+      HealthCheckPath: /
+      HealthCheckPort: 80
+      HealthCheckProtocol: HTTP
+      HealthCheckTimeoutSeconds: 5
+      HealthyThresholdCount: 2
+      UnhealthyThresholdCount: 2
       Tags:
         - Key: Name
-          Value: !Sub ${ExportedBaseName}-Target-Group
+          Value: !Sub
+            - ${ExportedBaseName}-Target-Group
+            - ExportedBaseName: { "Fn::ImportValue": ExportedBaseName }
 
   # S3
   S3Bucket:
     Type: AWS::S3::Bucket
     Properties:
-      BucketName: !Sub ${ExportedBaseName}-bucket
+      BucketName: !Sub
+        - ${ExportedBaseName}-bucket
+        - ExportedBaseName: { "Fn::ImportValue": ExportedBaseName }
       PublicAccessBlockConfiguration:
         BlockPublicAcls: true
         BlockPublicPolicy: true
@@ -92,4 +104,6 @@ Resources:
               SSEAlgorithm: AES256
       Tags:
         - Key: Name
-          Value: !Sub ${ExportedBaseName}-S3
+          Value: !Sub
+            - ${ExportedBaseName}-S3
+            - ExportedBaseName: { "Fn::ImportValue": ExportedBaseName }

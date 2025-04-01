@@ -167,26 +167,26 @@ Outputs:
     Export:
       Name: ExportedVpcId
 
-  Subnet1Id:
-    Description: This is the subnet 1a ID
+  PublicSubnet1Id:
+    Description: This is the ap-northeast-1a public subnet ID
     Value: !Ref PublicSubnet1
     Export:
-      Name: ExportedSubnet1Id
+      Name: ExportedPublicSubnet1Id
 
-  Subnet2Id:
-    Description: This is the subnet 1c ID
+  PublicSubnet2Id:
+    Description: This is the ap-northeast-1c public subnet ID
     Value: !Ref PublicSubnet2
     Export:
-      Name: ExportedSubnet2Id
+      Name: ExportedPublicSubnet2Id
 
   PrivateSubnet1Id:
-    Description: This is the private subnet 1a ID
+    Description: This is the ap-northeast-1a private subnet ID
     Value: !Ref PrivateSubnet1
     Export:
       Name: ExportedPrivateSubnet1Id
 
   PrivateSubnet2Id:
-    Description: This is the private subnet 1c ID
+    Description: This is the ap-northeast-1c private subnet ID
     Value: !Ref PrivateSubnet2
     Export:
       Name: ExportedPrivateSubnet2Id
