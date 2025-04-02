@@ -120,7 +120,7 @@ Outputs:
     Description: This is the RDS security group ID
     Value: !Ref RDSSecurityGroup
     Export:
-      Name: ExportedRdsSecurityGroupId
+      Name: ExportedRDSSecurityGroupId
 
   S3InstanceProfile:
     Description: This is the S3 instance profile

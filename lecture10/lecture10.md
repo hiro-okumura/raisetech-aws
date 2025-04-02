@@ -7,7 +7,7 @@
 ## 使用したテンプレート
 
 - [lecture10-network.yml](templates/lecture10-network.yml)（VPC / サブネット / IGW / ルートテーブル）
-- [lecture10-security.yml](templates/lecture10-security.yml)（セキュリティグループ / IAM ロール / インスタンスプロファイル )
+- [lecture10-security.yml](templates/lecture10-security.yml)（セキュリティグループ / IAM ロール / インスタンスプロファイル ）
 - [lecture10-application.yml](templates/lecture10-application.yml)（EC2 / ALB 関連 / RDS / S3）
 - [lecture10-database.yml](templates/lecture10-database.yml)（RDS / サブネットグループ / シークレット）
 
@@ -56,6 +56,10 @@
 ### ALB のセキュリティグループ
 
 ![ALB-SG](images/ALB-SG.png)
+
+### ALB のターゲットグループ
+
+![ALB-Target-Group](images/ALB-Target-Group.png)
 
 ### S3 バケット
 

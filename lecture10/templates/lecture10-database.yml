@@ -28,7 +28,7 @@ Resources:
       MasterUsername: "{{resolve:secretsmanager:raisetech-rds-secret:SecretString:username}}"
       MasterUserPassword: "{{resolve:secretsmanager:raisetech-rds-secret:SecretString:password}}"
       VPCSecurityGroups:
-        - !ImportValue ExportedRDS-SG-ID
+        - !ImportValue ExportedRDSSecurityGroupId
       DBSubnetGroupName: !Ref DBSubnetGroup
       Tags:
         - Key: Name
