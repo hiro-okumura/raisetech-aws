@@ -26,10 +26,6 @@ Resources:
           FromPort: 22
           ToPort: 22
           CidrIp: !Ref MyIP
-        - IpProtocol: tcp
-          FromPort: 3000
-          ToPort: 3000
-          SourceSecurityGroupId: !Ref ALBSecurityGroup
       Tags:
         - Key: Name
           Value: !Sub
@@ -112,25 +108,25 @@ Outputs:
     Description: This is the ALB security group ID
     Value: !Ref ALBSecurityGroup
     Export:
-      Name: ExportedALB-SG-ID
+      Name: ExportedALBSecurityGroupId
 
   EC2SecurityGroupId:
     Description: This is the EC2 security group ID
     Value: !Ref EC2SecurityGroup
     Export:
-      Name: ExportedEC2-SG-ID
+      Name: ExportedEC2SecurityGroupId
 
   S3SecurityGroupId:
     Description: This is the S3 security group ID
     Value: !Ref S3SecurityGroup
     Export:
-      Name: ExportedS3-SG-ID
+      Name: ExportedS3SecurityGroupId
 
   RDSSecurityGroupId:
     Description: This is the RDS security group ID
     Value: !Ref RDSSecurityGroup
     Export:
-      Name: ExportedRDS-SG-ID
+      Name: ExportedRdsSecurityGroupId
 
   S3InstanceProfile:
     Description: This is the S3 instance profile

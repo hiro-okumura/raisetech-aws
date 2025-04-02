@@ -21,7 +21,7 @@ Resources:
           SubnetId: !ImportValue ExportedPublicSubnet1Id
           AssociatePublicIpAddress: true
           GroupSet:
-            - !ImportValue ExportedEC2-SG-ID
+            - !ImportValue ExportedEC2SecurityGroupId
       Tags:
         - Key: Name
           Value: !Sub
@@ -42,7 +42,7 @@ Resources:
         - !ImportValue ExportedPublicSubnet1Id
         - !ImportValue ExportedPublicSubnet2Id
       SecurityGroups:
-        - !ImportValue ExportedALB-SG-ID
+        - !ImportValue ExportedALBSecurityGroupId
       Tags:
         - Key: Name
           Value: !Sub
@@ -80,6 +80,9 @@ Resources:
       HealthCheckTimeoutSeconds: 5
       HealthyThresholdCount: 2
       UnhealthyThresholdCount: 2
+      Targets:
+        - Id: !Ref EC2Instance
+          Port: 80
       Tags:
         - Key: Name
           Value: !Sub
