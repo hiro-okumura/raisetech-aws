@@ -116,12 +116,6 @@ Outputs:
     Export:
       Name: ExportedEC2SecurityGroupId
 
-  S3SecurityGroupId:
-    Description: This is the S3 security group ID
-    Value: !Ref S3SecurityGroup
-    Export:
-      Name: ExportedS3SecurityGroupId
-
   RDSSecurityGroupId:
     Description: This is the RDS security group ID
     Value: !Ref RDSSecurityGroup
