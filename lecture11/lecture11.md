@@ -18,13 +18,10 @@ $ serverspec-init # テストに必要なファイルを生成
 
 ### 1. まずは講義で配布されたサンプルをベースに実行確認
 
-- 配布ファイルに 22 番ポートを追加した。
-
 ```
 require 'spec_helper'
 
 listen_port = 80
-listen_port = 22
 
 describe package('nginx') do
   it { should be_installed }
@@ -47,11 +44,11 @@ $ rake spec
 
 **実行結果**
 
-![実行確認1回目](images/rake-spec-1.png)
+![実行確認1回目](images/rake-spec1.png)
 
 ### 2. 次に、`ruby / bundler / yarn`のバージョン確認を追加
 
-![sample_spec.rbファイルを編集](images/sample_spec.rb-1.png)
+![sample_spec.rbファイルを編集](images/sample_spec.rb1.png)
 
 **下記のバージョンとマッチすれば成功。**
 
@@ -61,7 +58,7 @@ $ rake spec
 
 **画像の通り成功している。**
 
-![実行確認2回目](images/rake-spec-2.png)
+![実行確認2回目](images/rake-spec2.png)
 
 ### 3. さらに、`Nginx / Puma`の起動確認
 

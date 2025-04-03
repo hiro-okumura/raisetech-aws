@@ -1,7 +1,6 @@
 require 'spec_helper'
 
 listen_port = 80
-listen_port = 22
 
 describe command('ruby -v') do
     its(:stdout) { should match 'ruby 3.2.3' }
@@ -30,6 +29,10 @@ describe service('puma') do
 end
 
 describe port(listen_port) do
+    it { should be_listening }
+end
+
+describe port('22') do
     it { should be_listening }
 end
 
