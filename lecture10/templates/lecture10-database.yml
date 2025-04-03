@@ -1,0 +1,67 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: Database Stack for RaiseTech Lecture10
+
+Parameters:
+  RDSAvailabilityZone:
+    Description: The availability zone of the RDS
+    Type: String
+    Default: ap-northeast-1a
+
+Resources:
+  # RDS
+  RDS:
+    Type: AWS::RDS::DBInstance
+    DependsOn: RDSSecret
+    Properties:
+      DBName: lecture10db
+      DBInstanceIdentifier: !Sub
+        - ${ExportedBaseName}-database
+        - ExportedBaseName: { "Fn::ImportValue": ExportedBaseName }
+      AvailabilityZone: !Ref RDSAvailabilityZone
+      Engine: mysql
+      DBInstanceClass: db.t4g.micro
+      AllocatedStorage: 20
+      EngineVersion: 8.0.40
+      StorageType: gp2
+      MultiAZ: false
+      PubliclyAccessible: false
+      MasterUsername: "{{resolve:secretsmanager:raisetech-rds-secret:SecretString:username}}"
+      MasterUserPassword: "{{resolve:secretsmanager:raisetech-rds-secret:SecretString:password}}"
+      VPCSecurityGroups:
+        - !ImportValue ExportedRDSSecurityGroupId
+      DBSubnetGroupName: !Ref DBSubnetGroup
+      Tags:
+        - Key: Name
+          Value: !Sub
+            - ${ExportedBaseName}-Database
+            - ExportedBaseName: { "Fn::ImportValue": ExportedBaseName }
+
+  # DBサブネットグループ
+  DBSubnetGroup:
+    Type: AWS::RDS::DBSubnetGroup
+    Properties:
+      DBSubnetGroupDescription: Subnet group for RDS
+      SubnetIds:
+        - !ImportValue ExportedPrivateSubnet1Id
+        - !ImportValue ExportedPrivateSubnet2Id
+      Tags:
+        - Key: Name
+          Value: !Sub
+            - ${ExportedBaseName}-DB-Subnet-Group
+            - ExportedBaseName: { "Fn::ImportValue": ExportedBaseName }
+
+  # シークレットマネージャー For RDS
+  RDSSecret:
+    Type: "AWS::SecretsManager::Secret"
+    Properties:
+      Name: raisetech-rds-secret
+      GenerateSecretString:
+        SecretStringTemplate: '{"username": "admin"}'
+        GenerateStringKey: "password"
+        PasswordLength: 20
+        ExcludeCharacters: '"@/\'
+      Tags:
+        - Key: Name
+          Value: !Sub
+            - ${ExportedBaseName}-RDSSecret
+            - ExportedBaseName: { "Fn::ImportValue": ExportedBaseName }
