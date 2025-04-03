@@ -1,4 +1,3 @@
-"sample_spec.rb" 39L, 774B                                                  21,0-1        All
 require 'spec_helper'
 
 listen_port = 80
