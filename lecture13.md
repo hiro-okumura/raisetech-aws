@@ -29,40 +29,40 @@
   - AWS_DEFAULT_REGION
   - AWS_SECRET_ACCESS_KEY
 
-![環境変数](/lecture13/Environment_Variables.png)
+![環境変数](/lecture13/images/Environment_Variables.png)
 
 - SSH KEY
 
-![SSH_KEY](/lecture13/SSH_KEY.png)
+![SSH_KEY](/lecture13/images/SSH_KEY.png)
 
 ## 結論：CircleCI における実行結果
 
 ### cfn-lint の実行結果
 
-![cfn-lint](/lecture13/cfn-lint.png)
+![cfn-lint](/lecture13/images/cfn-lint.png)
 
 ### execute-cfn の実行結果
 
-![execute-cfn](/lecture13/execute-cfn.png)
+![execute-cfn](/lecture13/images/execute-cfn.png)
 
 ### execute-ansible の実行結果
 
-![execute-ansible](/lecture13/execute-ansible.png)
+![execute-ansible](/lecture13/images/execute-ansible.png)
 
 ### execute-serverspec の実行結果
 
-![execute-serverspec](/lecture13/execute-serverspec.png)
-![Serverspecの詳細結果](/lecture13/bundle_exec_rake_spec.png)
+![execute-serverspec](/lecture13/images/execute-serverspec.png)
+![Serverspecの詳細結果](/lecture13/images/bundle_exec_rake_spec.png)
 
 ### アプリケーションの動作確認
 
 #### ALB の DNS を 利用してブラウザからアクセスに成功
 
-![アプリケーション動作確認](/lecture13/ALB_DNSでアプリにアクセス.png)
+![アプリケーション動作確認](/lecture13/images/ALB_DNSでアプリにアクセス.png)
 
 #### S3 に画像が保存されている事を確認
 
-![S3 画像の保存先](/lecture13/S3に保存.png)
+![S3 画像の保存先](/lecture13/images/S3に保存.png)
 
 ## 手順: Ansible の手動構築の一部
 
@@ -71,12 +71,12 @@
 - プレイブックの実行にはタグを使いながら動作確認をした。`ansible-playbook -i inventory.ini playbook.yml  -t "yum"`。
 - 本課題は CircleCI 上での自動デプロイのため、手動構築でアプリケーションまですべてを実装することはしない事とした。あくまで、手動構築を経ることで実装内容のイメージを掴むための目的とした。
 
-![tree](/lecture13/ansible-tree.png)
-![Playbook.yml](/lecture13/ansible-playbook.png)
-![roles/rbenv](/lecture13/playbook_rbenv.png)
-![roles/nodejs](/lecture13/playbook_nodejs.png)
-![roles/web_server](/lecture13/playbook-web_server.png)
-![バージョン情報](/lecture13/version.png)
+![tree](/lecture13/images/ansible-tree.png)
+![Playbook.yml](/lecture13/images/ansible-playbook.png)
+![roles/rbenv](/lecture13/images/playbook_rbenv.png)
+![roles/nodejs](/lecture13/images/playbook_nodejs.png)
+![roles/web_server](/lecture13/images/playbook-web_server.png)
+![バージョン情報](/lecture13/images/version.png)
 
 ## 学んだ事
 
@@ -84,7 +84,7 @@
 
 - [AWS で学ぶ！ Ansible による Infrastructure as Code 入門](https://www.udemy.com/course/aws-ansibleinfrastructure-as-code/?couponCode=CP130525JP)
 
-![Udemyの講座](/lecture13/udemy_ansible_course.png)
+![Udemyの講座](/lecture13/images/udemy_ansible_course.png)
 
 - 学習内容
   - Ansible の基本（inventory, Playbook, module, role など）
