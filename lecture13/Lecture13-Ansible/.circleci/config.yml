@@ -1,0 +1,107 @@
+version: 2.1
+orbs:
+  python: circleci/python@2.0.3
+  aws-cli: circleci/aws-cli@5.3.2
+  ansible-playbook: orbss/ansible-playbook@0.0.5
+  ruby: circleci/ruby@2.5.3
+
+jobs:
+  cfn-lint:
+    executor: python/default
+    steps:
+      - checkout
+      - run: pip install cfn-lint
+      - run:
+          name: run cfn-lint
+          command: |
+            cfn-lint -i W3002 -t cloudformation/*.yml
+
+  execute-cfn:
+    executor: aws-cli/default
+    steps:
+      # リポジトリからソースコードを取得
+      - checkout
+      - aws-cli/setup:
+          aws_access_key_id: AWS_ACCESS_KEY_ID
+          aws_secret_access_key: AWS_SECRET_ACCESS_KEY
+          region: AWS_DEFAULT_REGION
+      - run:
+          name: Deploy Cloudformation
+          command: |
+            set -x
+            aws cloudformation deploy --template-file cloudformation/network.yml --stack-name lecture13-network-stack
+            aws cloudformation deploy --template-file cloudformation/security.yml --stack-name lecture13-security-stack --capabilities CAPABILITY_NAMED_IAM
+            aws cloudformation deploy --template-file cloudformation/application.yml --stack-name lecture13-application-stack
+            aws cloudformation deploy --template-file cloudformation/database.yml --stack-name lecture13-database-stack
+
+  execute-ansible:
+    executor: ansible-playbook/default
+    environment:
+      ANSIBLE_CONFIG: ansible/ansible.cfg
+    steps:
+      - checkout
+      - add_ssh_keys:
+          fingerprints:
+            - "SHA256:Zg3tPXldH212I6UD/wq3xpNHwu83GIwvWU9etbPkf7E"
+      - ansible-playbook/install:
+          version: 2.10.7
+      - aws-cli/setup:
+          aws_access_key_id: AWS_ACCESS_KEY_ID
+          aws_secret_access_key: AWS_SECRET_ACCESS_KEY
+          region: AWS_DEFAULT_REGION
+      - run:
+          name: Set Environemnt Vars
+          command: |
+            set -x
+            AWS_RDS_PASSWORD=$(aws secretsmanager get-secret-value --secret-id raisetech-rds-secret --query 'SecretString' --output text | jq '.password')
+            AWS_RDS_ENDPOINT=$(aws cloudformation describe-stacks --stack-name lecture13-database-stack --query "Stacks[0].Outputs[?OutputKey=='RDSEndpoint'].OutputValue" --output text)
+            AWS_S3_BUCKET_NAME=$(aws cloudformation describe-stacks --stack-name lecture13-application-stack --query "Stacks[0].Outputs[?OutputKey=='S3BucketName'].OutputValue" --output text)
+            AWS_ALB_DNS_NAME=$(aws cloudformation describe-stacks --stack-name lecture13-application-stack --query "Stacks[0].Outputs[?OutputKey=='ALBDNSName'].OutputValue" --output text)
+            echo "export AWS_RDS_PASSWORD=${AWS_RDS_PASSWORD}" >> $BASH_ENV
+            echo "export AWS_RDS_ENDPOINT=${AWS_RDS_ENDPOINT}" >> $BASH_ENV
+            echo "export AWS_S3_BUCKET_NAME=${AWS_S3_BUCKET_NAME}" >> $BASH_ENV
+            echo "export AWS_ALB_DNS_NAME=${AWS_ALB_DNS_NAME}" >> $BASH_ENV
+      - ansible-playbook/playbook:
+          playbook: ansible/playbook.yml
+          playbook-options: -i ansible/inventory.ini #-vvv
+
+  execute-serverspec:
+    executor: ruby/default
+    steps:
+      - checkout
+      - ruby/install:
+          version: 3.2.3
+      - add_ssh_keys:
+          fingerprints:
+            - "SHA256:BUEI3gQwoQlNCSWR9Shf235hGxiCAt214XuOvSbPjkA"
+      - run:
+          name: Set ~/.ssh/config
+          command: |
+            mkdir -p ~/.ssh
+            echo "Host target" >> ~/.ssh/config
+            echo "HostName 43.206.21.197" >> ~/.ssh/config
+            echo "User ec2-user" >> ~/.ssh/config
+      - run:
+          name: Setup Serverspec
+          command: |
+            cd serverspec
+            bundle install
+      - run:
+          name: Execute Serverspec
+          command: |
+            cd serverspec
+            bundle exec rake spec
+
+workflows:
+  lecture13-provisioning:
+    jobs:
+      - cfn-lint
+      - execute-cfn:
+          requires:
+            - cfn-lint
+      - execute-ansible:
+          requires:
+            - execute-cfn
+      - execute-serverspec:
+          requires:
+            - execute-ansible
