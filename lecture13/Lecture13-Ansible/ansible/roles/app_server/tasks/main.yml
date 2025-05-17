@@ -29,13 +29,6 @@
   systemd:
     daemon_reload: yes
 
-- name: Restart MySQL
-  become: true
-  become_user: root
-  service:
-    name: mysqld
-    state: restarted
-
 - name: Execute bin/setup
   shell: bash -lc "bin/setup"
   args:
