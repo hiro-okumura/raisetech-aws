@@ -6,6 +6,7 @@
     state: absent
 
 - name: Install MySQL rpm Repository
+  become: true
   become_user: root
   yum:
     name: "https://repo.mysql.com//mysql80-community-release-el7-7.noarch.rpm"
@@ -28,20 +29,17 @@
     state: present
 
 - name: Set database.yml.j2 Template
-  become: true
-  become_user: root
   template:
     src: database.yml.j2
     dest: "{{ app_dir }}/config/database.yml"
 
 - name: Set storage.yml.j2 Template
-  become: true
-  become_user: root
   template:
     src: storage.yml.j2
     dest: "{{ app_dir }}/config/storage.yml"
 
 - name: Start and Enabled MySQL
+  become: true
   become_user: root
   service:
     name: mysqld

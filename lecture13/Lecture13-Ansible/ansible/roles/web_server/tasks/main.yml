@@ -1,32 +1,31 @@
 - name: Check If Nginx1 is Installed
-  become: true
   shell: "amazon-linux-extras list"
   register: amazon_linux_extras_list
   changed_when: false
 
 - name: Enable to Install Nginx1
-  become_user: root
   become: true
+  become_user: root
   shell: "amazon-linux-extras enable nginx1"
   when: "'nginx1=latest' not in amazon_linux_extras_list.stdout"
 
 - name: Install Nginx
-  become_user: root
   become: true
+  become_user: root
   yum:
     name: nginx
 
 - name: Set nginx.conf.j2 Template
-  become_user: root
   become: true
+  become_user: root
   template:
     src: nginx.conf.j2
     dest: "/etc/nginx/nginx.conf"
     mode: "644"
 
 - name: Change Owner /var/lib/nginx
-  become_user: root
   become: true
+  become_user: root
   file:
     path: /var/lib/nginx/
     state: directory
@@ -35,15 +34,15 @@
     recurse: true
 
 - name: Restart Nginx
-  become_user: root
   become: true
+  become_user: root
   systemd:
     name: nginx
     state: restarted
 
 - name: Restart Puma
-  become_user: root
   become: true
+  become_user: root
   systemd:
     name: puma
     state: restarted

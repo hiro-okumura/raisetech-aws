@@ -5,7 +5,6 @@
   ignore_errors: true
 
 - name: Install nvm If Not Present
-  become: no
   shell: >
     curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.40.1/install.sh | bash
   args:
@@ -21,7 +20,6 @@
   ignore_errors: true
 
 - name: Install node.js If Not Present
-  become: no
   shell: >
     . /home/ec2-user/.nvm/nvm.sh && nvm install {{ item }}
   args:
