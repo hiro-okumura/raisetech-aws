@@ -31,7 +31,7 @@ jobs:
             set -x
             aws cloudformation deploy --template-file cloudformation/network.yml --stack-name lecture13-network-stack
             aws cloudformation deploy --template-file cloudformation/security.yml --stack-name lecture13-security-stack --capabilities CAPABILITY_NAMED_IAM
-            aws cloudformation deploy --template-file cloudformation/application.yml --stack-name lecture13-application-stack
+            aws cloudformation deploy --template-file cloudformation/application.yml --stack-name lecture13-application-stack --parameter-overrides MyKeyName=$MY_KEY_PAIR
             aws cloudformation deploy --template-file cloudformation/database.yml --stack-name lecture13-database-stack
 
   execute-ansible:
@@ -57,10 +57,14 @@ jobs:
             AWS_RDS_ENDPOINT=$(aws cloudformation describe-stacks --stack-name lecture13-database-stack --query "Stacks[0].Outputs[?OutputKey=='RDSEndpoint'].OutputValue" --output text)
             AWS_S3_BUCKET_NAME=$(aws cloudformation describe-stacks --stack-name lecture13-application-stack --query "Stacks[0].Outputs[?OutputKey=='S3BucketName'].OutputValue" --output text)
             AWS_ALB_DNS_NAME=$(aws cloudformation describe-stacks --stack-name lecture13-application-stack --query "Stacks[0].Outputs[?OutputKey=='ALBDNSName'].OutputValue" --output text)
+            EC2_PUBLIC_IP=$(aws cloudformation describe-stacks --stack-name lecture13-application-stack --query "Stacks[0].Outputs[?OutputKey=='EC2PublicIP'].OutputValue" --output text)
+
             echo "export AWS_RDS_PASSWORD=${AWS_RDS_PASSWORD}" >> $BASH_ENV
             echo "export AWS_RDS_ENDPOINT=${AWS_RDS_ENDPOINT}" >> $BASH_ENV
             echo "export AWS_S3_BUCKET_NAME=${AWS_S3_BUCKET_NAME}" >> $BASH_ENV
             echo "export AWS_ALB_DNS_NAME=${AWS_ALB_DNS_NAME}" >> $BASH_ENV
+            echo "target ${EC2_PUBLIC_IP} ansible_connection=ssh ansible_user=ec2-user" > ansible/inventory.ini
+
       - ansible-playbook/playbook:
           playbook: ansible/playbook.yml
           playbook-options: -i ansible/inventory.ini
@@ -74,12 +78,21 @@ jobs:
       - add_ssh_keys:
           fingerprints:
             - "SHA256:BUEI3gQwoQlNCSWR9Shf235hGxiCAt214XuOvSbPjkA"
+      - aws-cli/setup:
+          aws_access_key_id: AWS_ACCESS_KEY_ID
+          aws_secret_access_key: AWS_SECRET_ACCESS_KEY
+          region: AWS_DEFAULT_REGION
+      - run:
+          name: Get EC2 Public IP
+          command: |
+            EC2_PUBLIC_IP=$(aws cloudformation describe-stacks --stack-name lecture13-application-stack --query "Stacks[0].Outputs[?OutputKey=='EC2PublicIP'].OutputValue" --output text)
+            echo "export EC2_PUBLIC_IP=${EC2_PUBLIC_IP}" >> $BASH_ENV
       - run:
           name: Set ~/.ssh/config
           command: |
             mkdir -p ~/.ssh
             echo "Host target" >> ~/.ssh/config
-            echo "HostName 43.206.21.197" >> ~/.ssh/config
+            echo "HostName ${EC2_PUBLIC_IP}" >> ~/.ssh/config
             echo "User ec2-user" >> ~/.ssh/config
       - run:
           name: Setup Serverspec

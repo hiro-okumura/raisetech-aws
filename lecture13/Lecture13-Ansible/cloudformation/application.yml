@@ -4,13 +4,7 @@ Description: Application Stack for RaiseTech Lecture13
 Parameters:
   KeyName:
     Description: The EC2 Key Pair to allow SSH access to the instance
-    Type: String
-    Default: ansible-ec2-keypair
-
-  ExistingEIP:
-    Description: Enter the Allocation ID
-    Type: String
-    Default: eipalloc-00466e1d222c257ac
+    Type: AWS::EC2::KeyPair::KeyName
 
 Resources:
   # ターゲットノード用のEC2インスタンス
@@ -18,13 +12,13 @@ Resources:
     Type: AWS::EC2::Instance
     Properties:
       ImageId: ami-037843ed9009f7d41
-      KeyName: !Ref KeyName
+      KeyName: !Ref MyKeyName
       InstanceType: t2.micro
       IamInstanceProfile: !ImportValue ExportedS3InstanceProfile
       NetworkInterfaces:
         - DeviceIndex: "0"
           SubnetId: !ImportValue ExportedPublicSubnet1Id
-          #AssociatePublicIpAddress: true
+          AssociatePublicIpAddress: true
           GroupSet:
             - !ImportValue ExportedEC2SecurityGroupId
       Tags:
@@ -32,13 +26,6 @@ Resources:
           Value: !Sub
             - ${ExportedBaseName}-target-EC2
             - ExportedBaseName: !ImportValue ExportedBaseName
-
-  # Elastic IPをEC2インスタンスに関連付ける
-  MyEIPAssociation:
-    Type: AWS::EC2::EIPAssociation
-    Properties:
-      AllocationId: !Ref ExistingEIP
-      InstanceId: !Ref MyEC2Instance
 
   # ALB
   ApplicationLoadBalancer:
@@ -127,3 +114,7 @@ Outputs:
   ALBDNSName:
     Description: ALB DNS Name
     Value: !GetAtt ApplicationLoadBalancer.DNSName
+
+  EC2PublicIP:
+    Description: EC2 Public IP
+    Value: !GetAtt MyEC2Instance.PublicIp
