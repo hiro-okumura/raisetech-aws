@@ -63,7 +63,7 @@ jobs:
             echo "export AWS_ALB_DNS_NAME=${AWS_ALB_DNS_NAME}" >> $BASH_ENV
       - ansible-playbook/playbook:
           playbook: ansible/playbook.yml
-          playbook-options: -i ansible/inventory.ini #-vvv
+          playbook-options: -i ansible/inventory.ini
 
   execute-serverspec:
     executor: ruby/default
