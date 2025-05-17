@@ -28,6 +28,7 @@
   - AWS_ACCESS_KEY_ID
   - AWS_DEFAULT_REGION
   - AWS_SECRET_ACCESS_KEY
+  - MY_KEY_PAIR
 
 ![環境変数](/lecture13/images/Environment_Variables.png)
 
@@ -58,11 +59,11 @@
 
 #### ALB の DNS を 利用してブラウザからアクセスに成功
 
-![アプリケーション動作確認](/lecture13/images/ALB_DNSでアプリにアクセス.png)
+![アプリケーション動作確認](/lecture13/images/Web_Application.png)
 
 #### S3 に画像が保存されている事を確認
 
-![S3 画像の保存先](/lecture13/images/S3に保存.png)
+![S3 画像の保存先](/lecture13/images/Save_S3.png)
 
 ## 手順: Ansible の手動構築の一部
 
