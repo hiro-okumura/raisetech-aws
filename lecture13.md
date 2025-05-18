@@ -1,6 +1,6 @@
 # 第 13 回課題
 
-**_CircleCI に CloudFormation・Ansible・Serverspec を組み込んで Rails アプリケーションを自動デプロイする_**
+- CircleCI に CloudFormation・Ansible・Serverspec を組み込んで Rails アプリケーションを自動デプロイする
 
 ## 概要
 
@@ -39,6 +39,8 @@
 ![SSH_KEY](/lecture13/images/SSH_KEY.png)
 
 ## 結論：CircleCI における実行結果
+
+![](/lecture13/images/circleci-workflow.png)
 
 ### cfn-lint の実行結果
 
