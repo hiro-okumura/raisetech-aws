@@ -1,47 +1,47 @@
 - name: Bundle Install
-  shell: bash -lc "bundle install"
+  ansible.builtin.shell: bash -lc "bundle install"
   args:
     chdir: "{{ app_dir }}"
 
 - name: Set application.rb.j2 Template
-  template:
+  ansible.builtin.template:
     src: application.rb.j2
     dest: "{{ app_dir }}/config/application.rb"
 
 - name: Set development.rb.j2 Template
-  template:
+  ansible.builtin.template:
     src: development.rb.j2
     dest: "{{ app_dir }}/config/environments/development.rb"
 
 - name: Set puma.rb.j2 Template
-  template:
+  ansible.builtin.template:
     src: puma.rb.j2
     dest: "{{ app_dir }}/config/puma.rb"
 
 - name: Set puma.service.j2 Template
   become_user: root
-  template:
+  ansible.builtin.template:
     src: puma.service.j2
     dest: "/etc/systemd/system/puma.service"
 
 - name: Restart Systemd
   become_user: root
-  systemd:
+  ansible.builtin.systemd:
     daemon_reload: yes
 
 - name: Execute bin/setup
-  shell: bash -lc "bin/setup"
+  ansible.builtin.shell: bash -lc "bin/setup"
   args:
     chdir: "{{ app_dir }}"
 
 # アプリケーション画面のデザイン崩れないようにする対策
 - name: Rails Assets Precompile
-  shell: bash -lc "RAILS_ENV=development bundle exec rails assets:precompile"
+  ansible.builtin.shell: bash -lc "RAILS_ENV=development bundle exec rails assets:precompile"
   args:
     chdir: "{{ app_dir }}"
 
 - name: Create Sockets and Process ID Directory
-  file:
+  ansible.builtin.file:
     path: "{{ item }}"
     state: directory
     owner: "ec2-user"

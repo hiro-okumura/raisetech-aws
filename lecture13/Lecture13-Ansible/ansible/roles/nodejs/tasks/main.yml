@@ -1,11 +1,11 @@
 - name: check If nvm is Installed
-  shell: bash -lc "nvm -v"
+  ansible.builtin.shell: bash -lc "nvm -v"
   register: nvm_exists
   changed_when: false
   ignore_errors: true
 
 - name: Install nvm If Not Present
-  shell: >
+  ansible.builtin.shell: >
     curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.40.1/install.sh | bash
   args:
     executable: /bin/bash
@@ -14,13 +14,13 @@
   when: nvm_exists is failed
 
 - name: check If node.js is Installed
-  shell: bash -lc "node -v | grep "{{ node_version }}""
+  ansible.builtin.shell: bash -lc "node -v | grep "{{ node_version }}""
   register: node_exists
   changed_when: false
   ignore_errors: true
 
 - name: Install node.js If Not Present
-  shell: >
+  ansible.builtin.shell: >
     . /home/ec2-user/.nvm/nvm.sh && nvm install {{ item }}
   args:
     executable: /bin/bash
@@ -31,17 +31,17 @@
   when: node_exists.failed
 
 - name: Check If yarn is Installed
-  shell: bash -lc "yarn -v | grep "{{ yarn_version }}""
+  ansible.builtin.shell: bash -lc "yarn -v | grep "{{ yarn_version }}""
   register: yarn_exists
   changed_when: false
   ignore_errors: true
 
 - name: Install yarn Globally If Not Present
-  shell: bash -lc "npm install -g yarn@{{ yarn_version }}"
+  ansible.builtin.shell: bash -lc "npm install -g yarn@{{ yarn_version }}"
   when: yarn_exists.failed
 
 - name: Install yarn Llocally If Not Present
-  shell: bash -lc "yarn install"
+  ansible.builtin.shell: bash -lc "yarn install"
   args:
     chdir: "{{ app_dir }}"
   when: yarn_exists.failed

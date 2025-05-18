@@ -1,28 +1,28 @@
 - name: Check If Nginx1 is Installed
-  shell: "amazon-linux-extras list"
+  ansible.builtin.shell: "amazon-linux-extras list"
   register: amazon_linux_extras_list
   changed_when: false
 
 - name: Enable to Install Nginx1
   become_user: root
-  shell: "amazon-linux-extras enable nginx1"
+  ansible.builtin.shell: "amazon-linux-extras enable nginx1"
   when: "'nginx1=latest' not in amazon_linux_extras_list.stdout"
 
 - name: Install Nginx
   become_user: root
-  yum:
+  ansible.builtin.yum:
     name: nginx
 
 - name: Set nginx.conf.j2 Template
   become_user: root
-  template:
+  ansible.builtin.template:
     src: nginx.conf.j2
     dest: "/etc/nginx/nginx.conf"
     mode: "644"
 
 - name: Change Owner /var/lib/nginx
   become_user: root
-  file:
+  ansible.builtin.file:
     path: /var/lib/nginx/
     state: directory
     owner: ec2-user
@@ -31,12 +31,12 @@
 
 - name: Restart Nginx
   become_user: root
-  systemd:
+  ansible.builtin.systemd:
     name: nginx
     state: restarted
 
 - name: Restart Puma
   become_user: root
-  systemd:
+  ansible.builtin.systemd:
     name: puma
     state: restarted

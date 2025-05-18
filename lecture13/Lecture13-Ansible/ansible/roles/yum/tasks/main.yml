@@ -1,19 +1,19 @@
 - name: Update yum
   become_user: root
-  yum:
+  ansible.builtin.yum:
     name: "*"
     state: latest
 
 - name: Install Git
   become_user: root
-  yum:
+  ansible.builtin.yum:
     name: git
     state: present
     lock_timeout: 180
 
 - name: Install Rails Packages
   become_user: root
-  yum:
+  ansible.builtin.yum:
     name:
       - gcc-c++
       - glibc-headers

@@ -1,35 +1,35 @@
 - name: Uninstall MariaDB
   become_user: root
-  yum:
+  ansible.builtin.yum:
     name: mariadb-*
     state: absent
 
 - name: Install MySQL rpm Repository
   become_user: root
-  yum:
+  ansible.builtin.yum:
     name: "https://repo.mysql.com//mysql80-community-release-el7-7.noarch.rpm"
     state: present
 
 - name: Import MySQL GPG Key
   become_user: root
-  rpm_key:
+  ansible.builtin.rpm_key:
     key: "https://repo.mysql.com/RPM-GPG-KEY-mysql-2023"
     state: present
 
 - name: Install MySQL Packages
   become_user: root
-  yum:
+  ansible.builtin.yum:
     name:
       - mysql-community-server
       - mysql-community-devel
     state: present
 
 - name: Set database.yml.j2 Template
-  template:
+  ansible.builtin.template:
     src: database.yml.j2
     dest: "{{ app_dir }}/config/database.yml"
 
 - name: Set storage.yml.j2 Template
-  template:
+  ansible.builtin.template:
     src: storage.yml.j2
     dest: "{{ app_dir }}/config/storage.yml"
