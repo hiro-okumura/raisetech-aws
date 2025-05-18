@@ -19,7 +19,9 @@
 
 ### 前提
 
-#### 課題の実施に使用したリポジトリ：[Lecture13-Ansible](https://github.com/hiro-okumura/Lecture13-Ansible)
+- 課題の実施に使用したリポジトリ：[Lecture13-Ansible](https://github.com/hiro-okumura/Lecture13-Ansible)
+
+- AWS リソースのうちキーペアについては、事前に手動で作成したものを使用する
 
 #### CircleCI のコンソールで以下の項目を設定する
 
@@ -28,7 +30,7 @@
   - AWS_ACCESS_KEY_ID
   - AWS_DEFAULT_REGION
   - AWS_SECRET_ACCESS_KEY
-  - MY_KEY_PAIR
+  - MY_KEY_PAIR（EC2 のキーペア）
 
 ![環境変数](/lecture13/images/Environment_Variables.png)
 
