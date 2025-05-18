@@ -37,11 +37,3 @@
   template:
     src: storage.yml.j2
     dest: "{{ app_dir }}/config/storage.yml"
-
-- name: Start and Enabled MySQL
-  become: true
-  become_user: root
-  service:
-    name: mysqld
-    state: started
-    enabled: yes

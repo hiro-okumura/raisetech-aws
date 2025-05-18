@@ -20,8 +20,8 @@ describe command('/home/ec2-user/.rbenv/shims/ruby -v') do
     its(:stdout) { should match /3\.2\.3/ }
 end
 
-describe service('mysqld') do
-    it { should be_running   }
+describe package('mysql-community-server') do
+    it { should be_installed }
 end
 
 describe service('puma') do
