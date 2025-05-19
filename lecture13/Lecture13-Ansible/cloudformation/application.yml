@@ -1,0 +1,120 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: Application Stack for RaiseTech Lecture13
+
+Parameters:
+  MyKeyName:
+    Description: The EC2 Key Pair to allow SSH access to the instance
+    Type: AWS::EC2::KeyPair::KeyName
+
+Resources:
+  # ターゲットノード用のEC2インスタンス
+  MyEC2Instance:
+    Type: AWS::EC2::Instance
+    Properties:
+      ImageId: ami-037843ed9009f7d41
+      KeyName: !Ref MyKeyName
+      InstanceType: t2.micro
+      IamInstanceProfile: !ImportValue ExportedS3InstanceProfile
+      NetworkInterfaces:
+        - DeviceIndex: "0"
+          SubnetId: !ImportValue ExportedPublicSubnet1Id
+          AssociatePublicIpAddress: true
+          GroupSet:
+            - !ImportValue ExportedEC2SecurityGroupId
+      Tags:
+        - Key: Name
+          Value: !Sub
+            - ${ExportedBaseName}-target-EC2
+            - ExportedBaseName: !ImportValue ExportedBaseName
+
+  # ALB
+  ApplicationLoadBalancer:
+    Type: AWS::ElasticLoadBalancingV2::LoadBalancer
+    Properties:
+      Name: !Sub
+        - ${ExportedBaseName}-ALB
+        - ExportedBaseName: !ImportValue ExportedBaseName
+      Type: application
+      Scheme: internet-facing
+      IpAddressType: ipv4
+      Subnets:
+        - !ImportValue ExportedPublicSubnet1Id
+        - !ImportValue ExportedPublicSubnet2Id
+      SecurityGroups:
+        - !ImportValue ExportedALBSecurityGroupId
+      Tags:
+        - Key: Name
+          Value: !Sub
+            - ${ExportedBaseName}-ALB
+            - ExportedBaseName: !ImportValue ExportedBaseName
+
+  # HTTPリスナー
+  ApplicationListener:
+    Type: AWS::ElasticLoadBalancingV2::Listener
+    Properties:
+      LoadBalancerArn: !Ref ApplicationLoadBalancer
+      DefaultActions:
+        - Type: forward
+          TargetGroupArn: !Ref ApplicationTargetGroup
+      Port: 80
+      Protocol: HTTP
+
+  # ターゲットグループ
+  ApplicationTargetGroup:
+    Type: AWS::ElasticLoadBalancingV2::TargetGroup
+    Properties:
+      Name: !Sub
+        - ${ExportedBaseName}-Target-Group
+        - ExportedBaseName: !ImportValue ExportedBaseName
+      Port: 80
+      Protocol: HTTP
+      TargetType: instance
+      VpcId: !ImportValue ExportedVpcId
+      IpAddressType: ipv4
+      Matcher:
+        HttpCode: 200
+      HealthCheckPath: /
+      HealthCheckPort: 80
+      HealthCheckProtocol: HTTP
+      HealthCheckTimeoutSeconds: 5
+      HealthyThresholdCount: 2
+      UnhealthyThresholdCount: 2
+      Targets:
+        - Id: !Ref MyEC2Instance
+          Port: 80
+      Tags:
+        - Key: Name
+          Value: !Sub
+            - ${ExportedBaseName}-Target-Group
+            - ExportedBaseName: !ImportValue ExportedBaseName
+
+  # S3
+  S3Bucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: !Sub
+        - ${ExportedBaseName}-bucket
+        - ExportedBaseName: !ImportValue ExportedBaseName
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: true
+        BlockPublicPolicy: true
+        IgnorePublicAcls: true
+        RestrictPublicBuckets: true
+      Tags:
+        - Key: Name
+          Value: !Sub
+            - ${ExportedBaseName}-S3
+            - ExportedBaseName: !ImportValue ExportedBaseName
+
+Outputs:
+  S3BucketName:
+    Description: S3 Bucket Name
+    Value: !Ref S3Bucket
+
+  ALBDNSName:
+    Description: ALB DNS Name
+    Value: !GetAtt ApplicationLoadBalancer.DNSName
+
+  EC2PublicIP:
+    Description: EC2 Public IP
+    Value: !GetAtt MyEC2Instance.PublicIp
