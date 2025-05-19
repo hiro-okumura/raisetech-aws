@@ -20,7 +20,7 @@
   become_user: root
   ansible.builtin.yum:
     name:
-      - mysql-community-server
+      - mysql-community-client
       - mysql-community-devel
     state: present
 

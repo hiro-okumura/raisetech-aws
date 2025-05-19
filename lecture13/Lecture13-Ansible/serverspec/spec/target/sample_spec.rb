@@ -20,7 +20,7 @@ describe command('/home/ec2-user/.rbenv/shims/ruby -v') do
     its(:stdout) { should match /3\.2\.3/ }
 end
 
-describe package('mysql-community-server') do
+describe package('mysql-community-client') do
     it { should be_installed }
 end
 
