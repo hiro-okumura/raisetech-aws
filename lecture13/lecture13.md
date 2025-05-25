@@ -1,4 +1,4 @@
-# 第 13 回課題
+# 第 13 回の課題
 
 - CircleCI に CloudFormation・Ansible・Serverspec を組み込んで Rails アプリケーションを自動デプロイする
 
