@@ -18,7 +18,7 @@
 ### CircleCI で実装したパイプライン
 
 1. cfn-lint による AWS CloudFormation の構文チェック
-2. AWS Cloudformation を実行して AWS 環境を構築
+2. AWS CloudFormation を実行して AWS 環境を構築
 3. Ansible を利用して Rails アプリケーションの環境を自動構築
 4. Serverspec を使って構築した環境への自動テストを実施
 
