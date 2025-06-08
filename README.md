@@ -12,7 +12,7 @@
 
 ## 最終成果物
 
-- 自動化に使用したリポジトリ：[Lecture13-Ansible](https://github.com/hiro-okumura/Lecture13-Ansible)
+- 自動化に使用したリポジトリ：[lecture13-ansible](https://github.com/hiro-okumura/lecture13-ansible)
 - 詳細なプロセスはこちら：[第 13 回の課題](lecture13/lecture13.md)
 
 ### CircleCI で実装したパイプライン
